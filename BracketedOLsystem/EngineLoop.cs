@@ -1,4 +1,6 @@
 ﻿using OpenGL;
+using System;
+using System.IO;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -6,22 +8,45 @@ namespace LSystem
 {
     public partial class EngineLoop
     {
-        public static string EXECUTE_PATH = Application.StartupPath;
+        public static string EXECUTE_PATH;
+        public static string PROJECT_PATH;
 
         private FPSCamera _camera;
-        private Form3D _form3d;
 
         private int _width;
         private int _height;
 
-        public EngineLoop(Form3D form)
+        private Action<int> _update;
+        private Action<int> _render;
+
+        public FPSCamera Camera => _camera;
+
+        public int Width => _width;
+        
+        public int Height => _height;
+
+        public Action<int> UpdateFrame
         {
-            _form3d = form;
+            get => _update;
+            set => _update = value;
+        }
+        public Action<int> RenderFrame
+        {
+            get => _render;
+            set => _render = value;
+        }
+
+        public EngineLoop()
+        {
+            EXECUTE_PATH = Application.StartupPath;
+            EngineLoop.PROJECT_PATH = Application.StartupPath;
+            EngineLoop.PROJECT_PATH = Directory.GetParent(EngineLoop.PROJECT_PATH).FullName;
+            EngineLoop.PROJECT_PATH = Directory.GetParent(EngineLoop.PROJECT_PATH).FullName;
         }
 
         public void Init(int width, int height)
         {
-            _width =  width;
+            _width = width;
             _height = height;
 
             ShowCursor(false);
@@ -29,29 +54,23 @@ namespace LSystem
         }
 
         public void Update(int deltaTime)
-        {            
+        {
             if (_camera == null)
             {
-                _camera = new FPSCamera("fpsCam", 0, 0, 0, 0, 0);
+                _camera = new FPSCamera("fpsCam", -13, -1.5f, 3, 0, 0);
                 _camera.Init(_width, _height);
             }
-            
+
             KeyCheck(deltaTime);
             _camera.Update(deltaTime);
 
-            _form3d.Text = $"{FramePerSecond.FPS}fps, t={FramePerSecond.GlobalTick}";
+            if (_update != null) _update(deltaTime);
+
         }
 
         public void Render(int deltaTime)
         {
-            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            Gl.ClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            Gl.Viewport(0, 0, (int)_width, (int)_height);
-            Gl.Enable(EnableCap.DepthTest);
-
-
-
+            if (_render != null) _render(deltaTime);
         }
 
         public void KeyCheck(int deltaTime)

@@ -28,39 +28,42 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.glControl1 = new OpenGL.GlControl();
-            this.SuspendLayout();
+            glControl1 = new OpenGL.GlControl();
+            SuspendLayout();
             // 
             // glControl1
             // 
-            this.glControl1.Animation = true;
-            this.glControl1.BackColor = System.Drawing.Color.Gray;
-            this.glControl1.ColorBits = ((uint)(24u));
-            this.glControl1.DepthBits = ((uint)(24u));
-            this.glControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.glControl1.Location = new System.Drawing.Point(0, 0);
-            this.glControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.glControl1.MultisampleBits = ((uint)(0u));
-            this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(800, 450);
-            this.glControl1.StencilBits = ((uint)(8u));
-            this.glControl1.TabIndex = 0;
+            glControl1.Animation = true;
+            glControl1.BackColor = System.Drawing.Color.Gray;
+            glControl1.ColorBits = 24U;
+            glControl1.DepthBits = 24U;
+            glControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            glControl1.Location = new System.Drawing.Point(0, 0);
+            glControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            glControl1.MultisampleBits = 0U;
+            glControl1.Name = "glControl1";
+            glControl1.Size = new System.Drawing.Size(800, 450);
+            glControl1.StencilBits = 8U;
+            glControl1.TabIndex = 0;
+            glControl1.Render += glControl1_Render;
+            glControl1.KeyDown += glControl1_KeyDown;
+            glControl1.MouseMove += glControl1_MouseMove;
+            glControl1.MouseWheel += glControl1_MouseWheel;
             // 
             // Form3D
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.glControl1);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "Form3D";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form3D";
-            this.Load += new System.EventHandler(this.Form3D_Load);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.ControlDark;
+            ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(glControl1);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "Form3D";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Form3D";
+            Load += Form3D_Load;
+            ResumeLayout(false);
         }
 
         #endregion

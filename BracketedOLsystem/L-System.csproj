@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -79,8 +80,10 @@
     <Reference Include="WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
+    <Compile Include="Camera\Camera.cs" />
     <Compile Include="EngineLoop.cs" />
+    <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Model\Entity.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -94,12 +97,23 @@
     <Compile Include="Form3D.Designer.cs">
       <DependentUpon>Form3D.cs</DependentUpon>
     </Compile>
-    <Compile Include="FPSCamera.cs" />
+    <Compile Include="Camera\FPSCamera.cs" />
     <Compile Include="FramePerSecond.cs" />
-    <Compile Include="KeyBoard.cs" />
+    <Compile Include="GUID.cs" />
+    <Compile Include="Input\KeyBoard.cs" />
     <Compile Include="LSystem.cs" />
+    <Compile Include="Model\Material.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rand.cs" />
+    <Compile Include="Model\RawModel3d.cs" />
+    <Compile Include="Renderer.cs" />
+    <Compile Include="Shader\ShaderProgram.cs" />
+    <Compile Include="Shader\ShaderUniform.cs" />
+    <Compile Include="Shader\StaticShader.cs" />
+    <Compile Include="Model\TangentSpace.cs" />
+    <Compile Include="Model\Texture.cs" />
+    <Compile Include="Model\TexturedModel.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -117,6 +131,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="EngineLoop.Setting.cs" />
+    <Compile Include="Model\Loader3d.cs" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -127,6 +142,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Shader\static.frag" />
+    <None Include="Shader\static.vert" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -142,6 +159,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Res\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
