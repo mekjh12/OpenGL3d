@@ -6,9 +6,12 @@ using System.Windows.Forms;
 
 namespace LindenmayerSystem
 {
+    /// <summary>
+    /// http://algorithmicbotany.org/papers/#abop
+    /// </summary>
     public partial class Form1 : Form
     {
-        LSystem olSystem;
+        LSystem _lSystem;
 
         public Form1()
         {
@@ -17,79 +20,53 @@ namespace LindenmayerSystem
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            _lSystem = new LSystem();
             tbGrammer.Text = "X,F[+X]F[-X]+X\r\nF,FF";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            olSystem = new LSystem();
-            olSystem.Init(n: (int)nbrNum.Value, delta: (float)nbrDelta.Value);
+            _lSystem = new LSystem();
+            _lSystem.Init(n: (int)nbrNum.Value, delta: (float)nbrDelta.Value);
+            _lSystem.LoadProductions(this.tbGrammer.Text);
+            _lSystem.Render(this.pictureBox1.CreateGraphics(),
+                axiom: this.tbAxiom.Text,
+                px: this.pictureBox1.Width / 2,
+                py: 10,
+                prad: 90,
+                height: this.pictureBox1.Height,
+                branchLength: (float)this.nbrLength.Value,
+                drawWidth: (float)this.nbrWidth.Value);
+        }
 
-            string[] lines = tbGrammer.Text.Split(new char[] { '\n' });
-            for (int i = 0; i < lines.Length; i++)
+        private void button2_Click(object sender, EventArgs e)
+        {
+            _lSystem.Init(n: (int)nbrNum.Value, delta: (float)nbrDelta.Value);
+            _lSystem.LoadProductions(this.tbGrammer.Text);
+            _lSystem.RenderRndColorRewriting(this.pictureBox1.CreateGraphics(),
+                axiom: this.tbAxiom.Text,
+                px: this.pictureBox1.Width / 2,
+                py: 10,
+                prad: 90,
+                height: this.pictureBox1.Height,
+                BranchLength: (float)this.nbrLength.Value);
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            if (this.colorDialog1.ShowDialog()== DialogResult.OK)
             {
-                string[] cols = lines[i].Split(new char[] {','});
-                if (cols.Length != 2) continue;
-                olSystem.Registry(cols[0].Trim(), cols[1].Trim());
+                _lSystem.BranchColor = this.colorDialog1.Color;
+                this.label1.BackColor = this.colorDialog1.Color;
             }
+        }
 
-            Vertex3f pose = new Vertex3f(300, 20, 90);
-            string word = olSystem.Generate(tbAxiom.Text);
-            float r = (float)nbrLength.Value;
-
-            // draw mode
-
-            Graphics g = pictureBox1.CreateGraphics();
-            g.Clear(Color.Gray);
-            Stack<Vertex3f> stack = new Stack<Vertex3f>();
-            Stack<Pen> color = new Stack<Pen>();
-
-            Random rnd = new Random();
-
-            Vertex2f end = new Vertex2f();
-            Vertex2f start = new Vertex2f();
-            int height = this.pictureBox1.Height;
-
-            Pen pen = new Pen(Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255)), 10);
-            color.Push(pen);
-
-            while (true)
+        private void label2_Click(object sender, EventArgs e)
+        {
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (word.Length == 0) break;
-                char c = word[0];
-                word = word.Substring(1);
-
-                if (c == 'F')
-                {
-                    start.x = pose.x;
-                    start.y = pose.y;
-                    float deg = pose.z;
-                    float rad = deg * 3.141502f / 180.0f;
-                    end.x = (float)(r *  Math.Cos(rad)) + start.x;
-                    end.y = (float)(r * Math.Sin(rad)) + start.y;
-                    g.DrawLine(pen, start.x, height - start.y, end.x, height - end.y);
-                    pose.x = end.x;
-                    pose.y = end.y;
-                }
-                else if (c == '+')
-                {
-                    pose.z += olSystem.Delta;
-                }
-                else if (c == '-')
-                {
-                    pose.z -= olSystem.Delta;
-                }
-                else if (c == '[')
-                {
-                    color.Push(pen);
-                    pen = new Pen(Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255)), 0.5f * pen.Width);
-                    stack.Push(new Vertex3f(pose.x, pose.y, pose.z));
-                }
-                else if (c == ']')
-                {
-                    pose = stack.Pop();
-                    pen = color.Pop();
-                }
+                _lSystem.LeafColor = this.colorDialog1.Color;
+                this.label2.BackColor = this.colorDialog1.Color;
             }
         }
     }
