@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace BracketedOLsystem
+namespace LindenmayerSystem
 {
-    class OLSystem
+    class LSystem
     {
         int _n;
         float _delta;

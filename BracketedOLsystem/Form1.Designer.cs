@@ -1,4 +1,4 @@
-﻿namespace BracketedOLsystem
+﻿namespace LindenmayerSystem
 {
     partial class Form1
     {

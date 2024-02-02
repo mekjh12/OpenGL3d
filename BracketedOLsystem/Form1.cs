@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace BracketedOLsystem
+namespace LindenmayerSystem
 {
     public partial class Form1 : Form
     {
-        OLSystem olSystem;
+        LSystem olSystem;
 
         public Form1()
         {
@@ -22,7 +22,7 @@ namespace BracketedOLsystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            olSystem = new OLSystem();
+            olSystem = new LSystem();
             olSystem.Init(n: (int)nbrNum.Value, delta: (float)nbrDelta.Value);
 
             string[] lines = tbGrammer.Text.Split(new char[] { '\n' });
