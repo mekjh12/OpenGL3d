@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace LindenmayerSystem
+namespace LSystem
 {
     internal static class Program
     {
@@ -13,7 +13,7 @@ namespace LindenmayerSystem
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Form3D());
         }
     }
 }

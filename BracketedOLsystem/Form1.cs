@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LindenmayerSystem
+namespace LSystem
 {
     /// <summary>
     /// http://algorithmicbotany.org/papers/#abop

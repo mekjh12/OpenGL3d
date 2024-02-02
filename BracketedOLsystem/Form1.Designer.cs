@@ -1,4 +1,4 @@
-﻿namespace LindenmayerSystem
+﻿namespace LSystem
 {
     partial class Form1
     {
@@ -169,6 +169,12 @@
             // 
             // nbrWidth
             // 
+            this.nbrWidth.DecimalPlaces = 1;
+            this.nbrWidth.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
             this.nbrWidth.Location = new System.Drawing.Point(93, 39);
             this.nbrWidth.Name = "nbrWidth";
             this.nbrWidth.Size = new System.Drawing.Size(75, 21);
