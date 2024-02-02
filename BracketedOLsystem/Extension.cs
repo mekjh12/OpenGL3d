@@ -79,25 +79,6 @@ namespace LSystem
         }
 
         /// <summary>
-        /// the reversing perspective projection P_frustum matrix for a view frustum.
-        /// </summary>
-        /// <param name="fovy"></param>
-        /// <param name="s"></param>
-        /// <param name="n"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static Matrix4x4f MakeRevFrustumProjection(float fovy, float s, float n, float f)
-        {
-            float g = 1.0f / (float)Math.Tan(fovy.ToRadian() * 0.5f);
-            float k = n / (n - f);
-            //column 0, column 1, column 2, column 3
-            return new Matrix4x4f(g / s, 0.0f, 0.0f, 0.0f,
-                                0.0f, g, 0.0f, 0.0f,
-                                0.0f, 0.0f, k, 1.0f,
-                                0.0f, 0.0f, -f * k, 0.0f);
-        }
-
-        /// <summary>
         /// [0, 1] 0:near 1:far
         /// </summary>
         /// <param name="fovy"></param>

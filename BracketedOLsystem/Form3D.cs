@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static OpenGL.Gl;
 
 namespace LSystem
 {
@@ -55,13 +56,8 @@ namespace LSystem
             {
                 FPSCamera camera = _gameLoop.Camera;
 
-                Gl.FrontFace(FrontFaceDirection.Ccw);
-                Gl.LineWidth(1.0f);
-                Gl.Viewport(0, 0, _gameLoop.Width, _gameLoop.Height);
-
-                // reversing depth-buffer test
-                Gl.ClearDepth(0.0f);
-                Gl.DepthFunc(DepthFunction.Gequal);
+                Gl.Enable(EnableCap.CullFace);
+                Gl.CullFace(CullFaceMode.Back);
 
                 Gl.ClearColor(0.1f, 0.1f, 0.8f, 1.0f);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -119,6 +115,14 @@ namespace LSystem
                 {
                     Application.Exit();
                 }
+            }
+            else if (e.KeyCode == Keys.D1)
+            {
+                LSystem _lSystem = new LSystem();
+                _lSystem.Init(n: 5, delta: 25.7f);
+                _lSystem.LoadProductions("X,F[+X]F[-X]+X\r\nF,FF");
+                string words = _lSystem.Generate("X");
+                Console.WriteLine(words);
             }
         }
     }

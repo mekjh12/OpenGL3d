@@ -83,15 +83,6 @@ namespace LSystem
             }
         }
 
-        public Matrix4x4f ProjectiveRevMatrix
-        {
-            get
-            {
-                float s = (float)_width / (float)_height;
-                return Extension.MakeRevFrustumProjection(FOV, s, NEAR, FAR);
-            }
-        }
-
         /// <summary>
         /// FocusDistance == g
         /// </summary>

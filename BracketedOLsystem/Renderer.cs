@@ -1,14 +1,15 @@
 ﻿using OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LSystem
 {
     public class Renderer
     {
+        public static RawModel3d Line = Loader3d.LoadLine(0, 0, 0, 1, 0, 0);
+        public static RawModel3d Cube = Loader3d.LoadCube();
+        public static RawModel3d Cone = Loader3d.LoadCone(4, 1.0f, 3.0f, false);
+        public static RawModel3d Sphere = Loader3d.LoadSphere(r: 1, piece: 6);
+        public static RawModel3d Rect = Loader3d.LoadPlane();
+
         public static void Render(StaticShader shader, Entity entity, Camera camera)
         {
             Gl.Enable(EnableCap.Blend);
@@ -34,7 +35,7 @@ namespace LSystem
             }
 
             shader.LoadObjectColor(entity.Material.Ambient);
-            shader.LoadProjMatrix(camera.ProjectiveRevMatrix);
+            shader.LoadProjMatrix(camera.ProjectiveMatrix);
             shader.LoadViewMatrix(camera.ViewMatrix);
             shader.LoadModelMatrix(entity.ModelMatrix);
 

@@ -53,7 +53,7 @@ namespace LSystem
             }
         }
 
-        private string Generate(string axiom)
+        public string Generate(string axiom)
         {
             string word = axiom;
 
@@ -64,7 +64,6 @@ namespace LSystem
                     string predecessor = item.Key;
                     word = ReplaceWord(word, predecessor);
                 }
-                Console.WriteLine(i + "=" + word);
             }
 
             return word;

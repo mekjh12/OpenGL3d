@@ -9,6 +9,358 @@ namespace LSystem
 {
     class Loader3d
     {
+        public static RawModel3d LoadLine(float sx, float sy, float sz, float ex, float ey, float ez)
+        {
+            float[] positions = new float[] { sx, sy, sz, ex, ey, ez };
+
+            uint vao = Gl.GenVertexArray();
+            Gl.BindVertexArray(vao);
+            uint vbo;
+            vbo = StoreDataInAttributeList(0, 3, positions);
+            Gl.BindVertexArray(0);
+
+            RawModel3d rawModel = new RawModel3d(vao, positions);
+            return rawModel;
+        }
+
+        /// <summary>
+        /// 반시계 방향으로 회전하여 적용한다.
+        /// </summary>
+        /// <param name="rotDeg">degree</param>
+        /// <returns></returns>
+        public static RawModel3d LoadPlane(float rotDeg = 0)
+        {
+            float Cos(float radian) => (float)Math.Cos(radian);
+            float Sin(float radian) => (float)Math.Sin(radian);
+
+            float[] positions =
+            {
+                -1.0f, -1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                1.0f, 1.0f,  0.0f,
+                1.0f, 1.0f,  0.0f,
+                -1.0f, 1.0f,  0.0f,
+                -1.0f, -1.0f,  0.0f
+            };
+
+            float[] normals =
+            {
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f
+            };
+
+            float[] textures =
+            {
+                0.0f, 0.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f,
+                1.0f, 1.0f,
+                0.0f, 1.0f,
+                0.0f, 0.0f
+            };
+
+            TangentSpace.CalculateTangents(positions, textures, normals, out float[] tangents, out float[] bitangents);
+
+            // (tu,tv)를 회전하여 텍스처링한다.
+            for (int i = 0; i < textures.Length; i += 2)
+            {
+                float tu = textures[i + 0];
+                float tv = textures[i + 1];
+                float deg = rotDeg.ToRadian();
+                textures[i + 0] = Cos(deg) * tu - Sin(deg) * tv;
+                textures[i + 1] = Sin(deg) * tu + Cos(deg) * tv;
+            }
+
+            uint vao = Gl.GenVertexArray();
+            Gl.BindVertexArray(vao);
+            uint vbo;
+            vbo = StoreDataInAttributeList(0, 3, positions);
+            vbo = StoreDataInAttributeList(1, 2, textures);
+            vbo = StoreDataInAttributeList(2, 3, normals);
+            vbo = StoreDataInAttributeList(3, 4, tangents);
+            vbo = StoreDataInAttributeList(4, 4, bitangents);
+            Gl.BindVertexArray(0);
+
+            RawModel3d rawModel = new RawModel3d(vao, positions);
+            return rawModel;
+        }
+
+        /// <summary>
+        /// 구면을 만든다.
+        /// </summary>
+        /// <param name="r">구의 반지름</param>
+        /// <param name="piece">위도0도부터 90도까지 n등분을 한다. 이것은 360도를 4n등분한다.</param>
+        /// <param name="outer">외부 또는 내부</param>
+        /// <returns></returns>
+        public static RawModel3d LoadSphere(float r = 1.0f, int piece = 3, float Tu = 1.0f, float Tv = 1.0f, bool outer = true)
+        {
+            float unitAngle = (float)(Math.PI / 2.0f) / piece;
+            float deltaTheta = 360.ToRadian() / (4.0f * piece);
+
+            List<float> vertices = new List<float>();
+            List<float> textures = new List<float>();
+
+            // <image url="$(ProjectDir)_PictureComment\SphereCoordinate.png" scale="0.8" />
+            // 반시계 방향으로 면을 생성한다.
+            for (int i = -piece; i < piece; i++) // phi
+            {
+                for (int j = 0; j < piece * 4; j++) // theta
+                {
+                    float theta1 = j * unitAngle;
+                    float theta2 = (j + 1) * unitAngle;
+                    float phi1 = i * unitAngle;
+                    float phi2 = (i + 1) * unitAngle;
+                    float tu1 = Tu * (deltaTheta * (j + 0)) / 360.ToRadian();
+                    float tu2 = Tu * deltaTheta * (j + 1) / 360.ToRadian();
+                    float tv1 = Tv * i * unitAngle / 90.ToRadian();
+                    float tv2 = Tv * (i + 1) * unitAngle / 90.ToRadian();
+
+                    if (outer)
+                    {
+                        if (i == (piece - 1))
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            textures.AddRange(TextureCoordination(tu2, tv1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                        }
+                        else if (i == -piece)
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                        }
+                        else
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                            textures.AddRange(TextureCoordination(tu2, tv1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                        }
+                    }
+                    else
+                    {
+                        if (i == (piece - 1))
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            textures.AddRange(TextureCoordination(tu2, tv1));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                        }
+                        else if (i == -piece)
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi2));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                            textures.AddRange(TextureCoordination(tu1, tv2));
+                        }
+                        else
+                        {
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi2));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta1, phi1));
+                            vertices.AddRange(SphereCoordination(r, theta2, phi2));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                            textures.AddRange(TextureCoordination(tu1, tv2));
+                            textures.AddRange(TextureCoordination(tu2, tv1));
+                            textures.AddRange(TextureCoordination(tu1, tv1));
+                            textures.AddRange(TextureCoordination(tu2, tv2));
+                        }
+                    }
+                }
+            }
+
+            float[] positions = vertices.ToArray();
+            float[] texCoords = textures.ToArray();
+
+            TangentSpace.CalculateTangents(positions, texCoords, positions, out float[] tangents, out float[] bitangents);
+
+            uint vao = Gl.GenVertexArray();
+            Gl.BindVertexArray(vao);
+            uint vbo;
+            vbo = StoreDataInAttributeList(0, 3, positions);
+            vbo = StoreDataInAttributeList(1, 2, texCoords);
+            vbo = StoreDataInAttributeList(2, 3, positions);
+            vbo = StoreDataInAttributeList(3, 4, tangents);
+            vbo = StoreDataInAttributeList(4, 4, bitangents);
+
+            Gl.BindVertexArray(0);
+
+            RawModel3d rawModel = new RawModel3d(vao, positions);
+            return rawModel;
+
+            float[] TextureCoordination(float tu, float tv)
+            {
+                float[] verts = new float[2];
+                verts[0] = tu;
+                verts[1] = tv;
+                return verts;
+            }
+
+            float[] SphereCoordination(float radius, float theta, float phi)
+            {
+                float[] verts = new float[3];
+                float z = radius * (float)Math.Sin(phi);
+                float R = radius * (float)Math.Cos(phi);
+                float x = R * (float)Math.Cos(theta);
+                float y = R * (float)Math.Sin(theta);
+                verts[0] = x;
+                verts[1] = y;
+                verts[2] = z;
+                return verts;
+            }
+        }
+
+
+        public static RawModel3d LoadCone(int n, float radius, float height, bool isOuter = true)
+        {
+            float Cos(float radian) => (float)Math.Cos(radian);
+            float Sin(float radian) => (float)Math.Sin(radian);
+
+            List<float> positionList = new List<float>();
+            List<float> normalList = new List<float>();
+            List<float> textureList = new List<float>();
+
+            Vertex3f[] vertices = new Vertex3f[n + 2];
+            Vertex2f[] texCoords = new Vertex2f[n + 1];
+
+            float unitRad = (360.0f / n).ToRadian();
+            for (int i = 0; i < n; i++)
+            {
+                float rad = i * unitRad;
+                float px = radius * Cos(rad);
+                float py = radius * Sin(rad);
+                vertices[i] = new Vertex3f(px, py, 0);
+                float tu = 0.5f * Cos(rad) + 0.5f;
+                float tv = 0.5f * Sin(rad) + 0.5f;
+                texCoords[i] = new Vertex2f(tu, tv);
+            }
+            vertices[n] = new Vertex3f(0, 0, 0);
+            vertices[n + 1] = new Vertex3f(0, 0, height);
+            texCoords[n] = new Vertex2f(0.5f, 0.5f);
+
+            int a, b, c;
+
+            // 옆면
+            for (int i = 0; i < n; i++)
+            {
+                if (isOuter)
+                {
+                    a = (i + 1) % n;
+                    b = (i + 0) % n;
+                    c = n + 1;
+                }
+                else
+                {
+                    a = (i + 0) % n;
+                    b = (i + 1) % n;
+                    c = n + 1;
+                }
+                positionList.Add(vertices[a].x);
+                positionList.Add(vertices[a].y);
+                positionList.Add(vertices[a].z);
+                positionList.Add(vertices[b].x);
+                positionList.Add(vertices[b].y);
+                positionList.Add(vertices[b].z);
+                positionList.Add(vertices[c].x);
+                positionList.Add(vertices[c].y);
+                positionList.Add(vertices[c].z);
+
+                textureList.Add(texCoords[a].x);
+                textureList.Add(texCoords[a].y);
+                textureList.Add(texCoords[b].x);
+                textureList.Add(texCoords[b].y);
+                textureList.Add(texCoords[n].x);
+                textureList.Add(texCoords[n].y);
+
+                Vertex3f normalA = vertices[a] - vertices[c];
+                normalA.z = -(normalA.x * normalA.x + normalA.y * normalA.y) / normalA.z;
+                Vertex3f normalB = vertices[b] - vertices[c];
+                normalB.z = -(normalB.x * normalB.x + normalB.y * normalB.y) / normalB.z;
+
+                normalList.Add(normalA.x); normalList.Add(normalA.y); normalList.Add(normalA.z);
+                normalList.Add(normalB.x); normalList.Add(normalB.y); normalList.Add(normalB.z);
+                normalList.Add(0); normalList.Add(0); normalList.Add(1);
+            }
+
+            // 아랫면
+            for (int i = 0; i < n; i++)
+            {
+                if (isOuter)
+                {
+                    a = (i + 0) % n;
+                    b = (i + 1) % n;
+                    c = n;
+                }
+                else
+                {
+                    a = (i + 1) % n;
+                    b = (i + 0) % n;
+                    c = n;
+                }
+                positionList.Add(vertices[a].x);
+                positionList.Add(vertices[a].y);
+                positionList.Add(vertices[a].z);
+                positionList.Add(vertices[b].x);
+                positionList.Add(vertices[b].y);
+                positionList.Add(vertices[b].z);
+                positionList.Add(vertices[c].x);
+                positionList.Add(vertices[c].y);
+                positionList.Add(vertices[c].z);
+                textureList.Add(texCoords[a].x); textureList.Add(texCoords[a].y);
+                textureList.Add(texCoords[b].x); textureList.Add(texCoords[b].y);
+                textureList.Add(texCoords[c].x); textureList.Add(texCoords[c].y);
+                normalList.Add(0); normalList.Add(0); normalList.Add(-1);
+                normalList.Add(0); normalList.Add(0); normalList.Add(-1);
+                normalList.Add(0); normalList.Add(0); normalList.Add(-1);
+            }
+
+            float[] positions = positionList.ToArray();
+            float[] textures = textureList.ToArray();
+            float[] normals = normalList.ToArray();
+
+            TangentSpace.CalculateTangents(positions, textures, normals, out float[] tangents, out float[] bitangents);
+
+            uint vao = Gl.GenVertexArray();
+            Gl.BindVertexArray(vao);
+            uint vbo;
+            vbo = StoreDataInAttributeList(0, 3, positions);
+            vbo = StoreDataInAttributeList(1, 2, textures);
+            vbo = StoreDataInAttributeList(2, 3, normals);
+            vbo = StoreDataInAttributeList(3, 4, tangents);
+            vbo = StoreDataInAttributeList(4, 4, bitangents);
+
+            Gl.BindVertexArray(0);
+
+            RawModel3d rawModel = new RawModel3d(vao, positions);
+            return rawModel;
+        }
+
+
         public static RawModel3d LoadCube(float tu = 1.0f, float tv = 1.0f, bool outer = true)
         {
             // vertices 8 points.
