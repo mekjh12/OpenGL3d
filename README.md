@@ -7,6 +7,8 @@
   <figcaption>Alt Text</figcaption>
 </figure>
 
+![caption](/path/to/image.jpg)
+
 ## 클래스 설명
 
 * EngineLoop
