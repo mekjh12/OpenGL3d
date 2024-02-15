@@ -1,7 +1,11 @@
-## Edge ReWriting
+## OpenGL C# 구현을 위한 기본 템플릿
 
-![image](https://github.com/mekjh12/LSystem/assets/122244587/4d599def-9a53-4d15-952e-0a3c5916779c)
+![image](https://github.com/mekjh12/OpenGL3d/assets/122244587/fbb8c295-bd4f-41e0-a698-feb2a0e7c56d)
 
-## Node ReWriting
 
-![image](https://github.com/mekjh12/LSystem/assets/122244587/84b6572d-2454-4a52-bba2-6b6c452440cc)
+## 클래스 설명
+
+* EngineLoop
+* FpsCamera <= Camera
+* Entity <= TexturedModel <= Texture + RawModel3d
+* StaticShader <= Shader 
