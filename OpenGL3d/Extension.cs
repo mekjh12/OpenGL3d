@@ -51,6 +51,11 @@ namespace LSystem
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
+        public static Vertex3f Vertex3f(this Vertex4f vec)
+        {
+            return new Vertex3f(vec.x, vec.y, vec.z);
+        }
+
         public static Matrix4x4f Scaled(Vertex3f scale)
         {
             Matrix4x4f mat = Matrix4x4f.Identity;

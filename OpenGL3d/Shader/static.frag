@@ -1,5 +1,6 @@
 ﻿#version 420 core
 in vec2 texCoords;
+in vec4 fcolor;
 
 uniform sampler2D modelTexture;
 uniform bool isTextured;
@@ -11,6 +12,5 @@ void main(void)
 {
     vec4 textureColor4 = texture(modelTexture, texCoords);
     if (textureColor4.a < 0.05f) discard;
-    out_Color = isTextured ? color * textureColor4 : color;
-    
+    out_Color = isTextured ? color * textureColor4 : color;    
 }

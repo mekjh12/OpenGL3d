@@ -1,9 +1,4 @@
 ﻿using OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LSystem
 {
@@ -22,6 +17,7 @@ namespace LSystem
         {
             base.BindAttribute(0, "position");
             base.BindAttribute(1, "textureCoords");
+            base.BindAttribute(2, "color");
         }
 
         protected override void GetAllUniformLocations()

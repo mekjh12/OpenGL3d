@@ -46,6 +46,30 @@ namespace LSystem
             Gl.DisableVertexAttribArray(0);
             Gl.BindVertexArray(0);
 
+            if (entity.IsAxisVisible)
+            {
+                Gl.BindVertexArray(Renderer.Line.VAO);
+                Gl.EnableVertexAttribArray(0);
+                shader.LoadIsTextured(false);
+                shader.LoadProjMatrix(camera.ProjectiveMatrix);
+                shader.LoadViewMatrix(camera.ViewMatrix);
+
+                shader.LoadObjectColor(new Vertex4f(1, 0, 0, 1));
+                shader.LoadModelMatrix(entity.ModelMatrix * Matrix4x4f.Scaled(3, 3, 3));
+                Gl.DrawArrays(PrimitiveType.Lines, 0, 2);
+
+                shader.LoadObjectColor(new Vertex4f(0, 1, 0, 1));
+                shader.LoadModelMatrix(entity.ModelMatrix * Matrix4x4f.RotatedZ(90) * Matrix4x4f.Scaled(3, 3, 3));
+                Gl.DrawArrays(PrimitiveType.Lines, 0, 2);
+
+                shader.LoadObjectColor(new Vertex4f(0, 0, 1, 1));
+                shader.LoadModelMatrix(entity.ModelMatrix * Matrix4x4f.RotatedY(-90) * Matrix4x4f.Scaled(3, 3, 3));
+                Gl.DrawArrays(PrimitiveType.Lines, 0, 2);
+
+                Gl.DisableVertexAttribArray(0);
+                Gl.BindVertexArray(0);
+            }
+
             shader.Unbind();
         }
 

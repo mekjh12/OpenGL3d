@@ -3,8 +3,10 @@ using System;
 
 namespace LSystem
 {
-    public class Camera
+    public abstract class Camera
     {
+        private const float MAX_VARIANCE = 10; // 처음시작할 때 급격한 변동을 막기 위한 변수
+
         protected string _name = "";
         protected const float SENSITIVITY = 1.0f;
 
@@ -20,11 +22,28 @@ namespace LSystem
         protected Vertex3f _cameraRight = Vertex3f.UnitX;
         protected Vertex3f _position;
 
+        protected const float MAX_PITCH = 89;
+        protected float _pitch = 0.0f;
+        protected float _yaw = 0.0f;
+
+
         public int Width => _width;
 
         public int Height => _height;
 
         public float AspectRatio => ((float)_width / (float)_height);
+
+        public float CameraPitch
+        {
+            get => _pitch;
+            set => _pitch = value;
+        }
+
+        public float CameraYaw
+        {
+            get => _yaw;
+            set => _yaw = value;
+        }
 
         public float FOV
         {
@@ -122,17 +141,17 @@ namespace LSystem
 
         public virtual void Update(int deltaTime)
         {
-
+            UpdateCameraVectors();
         }
 
-        public virtual void Render(int deltaTime)
-        {
-
-        }
+        protected abstract void UpdateCameraVectors();
 
         public virtual void Yaw(float deltaDegree)
         {
-
+            if (Math.Abs(deltaDegree) > MAX_VARIANCE) return;
+            _yaw += SENSITIVITY * deltaDegree;
+            if (_yaw < -180) _yaw += 360;
+            if (_yaw > 180) _yaw -= 360;
         }
 
         public virtual void Roll(float deltaDegree)
@@ -142,27 +161,29 @@ namespace LSystem
 
         public virtual void Pitch(float deltaDegree)
         {
-
+            if (Math.Abs(deltaDegree) > MAX_VARIANCE) return;
+            _pitch += SENSITIVITY * deltaDegree;
+            _pitch = _pitch.Clamp(-MAX_PITCH, MAX_PITCH);
         }
 
         public virtual void GoForward(float deltaDistance)
         {
-
+            _position += _cameraForward * deltaDistance;
         }
 
         public virtual void GoUp(float deltaDistance)
         {
-
+            _position += _cameraUp * deltaDistance;
         }
 
         public virtual void GoRight(float deltaDistance)
         {
-
+            _position += _cameraRight * deltaDistance;
         }
 
         public virtual void GoTo(Vertex3f position)
         {
-
+            _position = position;
         }
 
     }

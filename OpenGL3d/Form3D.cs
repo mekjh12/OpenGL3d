@@ -1,9 +1,8 @@
 ﻿using OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
-using static OpenGL.Gl;
+using System.Windows.Input;
 
 namespace LSystem
 {
@@ -34,6 +33,7 @@ namespace LSystem
                     Entity ent = new Entity(texturedModel);
                     ent.Position = new Vertex3f(3 * i, 3 * j, 0);
                     ent.Material = Material.White;
+                    ent.IsAxisVisible = true;
                     entities.Add(ent);
                 }
             }
@@ -48,18 +48,29 @@ namespace LSystem
                     _gameLoop.Init(w, h);
                     _gameLoop.Camera.Init(w, h);
                 }
-                FPSCamera camera = _gameLoop.Camera;
+
+                float milliSecond = deltaTime * 0.001f;
+
+                Entity entity = entities[0];
+                if (Keyboard.IsKeyDown(Key.D1)) entity.Roll(1);
+                if (Keyboard.IsKeyDown(Key.D2)) entity.Roll(-1);
+                if (Keyboard.IsKeyDown(Key.D3)) entity.Pitch(1);
+                if (Keyboard.IsKeyDown(Key.D4)) entity.Pitch(-1);
+                if (Keyboard.IsKeyDown(Key.D5)) entity.Yaw(1);
+                if (Keyboard.IsKeyDown(Key.D6)) entity.Yaw(-1);
+
+                Camera camera = _gameLoop.Camera;
                 this.Text = $"{FramePerSecond.FPS}fps, t={FramePerSecond.GlobalTick} p={camera.Position}";
             };
 
             _gameLoop.RenderFrame = (deltaTime) =>
             {
-                FPSCamera camera = _gameLoop.Camera;
+                Camera camera = _gameLoop.Camera;
 
                 Gl.Enable(EnableCap.CullFace);
                 Gl.CullFace(CullFaceMode.Back);
 
-                Gl.ClearColor(0.1f, 0.1f, 0.8f, 1.0f);
+                Gl.ClearColor(0.3f, 0.3f, 0.3f, 1.0f);
                 Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
                 Gl.Enable(EnableCap.DepthTest);
 
@@ -74,16 +85,17 @@ namespace LSystem
             };
         }
 
-        private void glControl1_MouseWheel(object sender, MouseEventArgs e)
+        private void glControl1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            FPSCamera camera = _gameLoop.Camera;
-            camera.GoForward(0.1f * e.Delta);
+            Camera camera = _gameLoop.Camera;
+            if (camera is FpsCamera) camera?.GoForward(0.02f * e.Delta);
+            if (camera is OrbitCamera) (camera as OrbitCamera)?.FarAway(-0.005f * e.Delta);
         }
 
-        private void glControl1_MouseMove(object sender, MouseEventArgs e)
+        private void glControl1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             Mouse.CurrentPosition = new Vertex2i(e.X, e.Y);
-            FPSCamera camera = _gameLoop.Camera;
+            Camera camera = _gameLoop.Camera;
             Vertex2i delta = Mouse.DeltaPosition;
             camera?.Yaw(-delta.x);
             camera?.Pitch(-delta.y);
@@ -107,7 +119,7 @@ namespace LSystem
             FramePerSecond.Update();
         }
 
-        private void glControl1_KeyDown(object sender, KeyEventArgs e)
+        private void glControl1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
@@ -116,13 +128,9 @@ namespace LSystem
                     Application.Exit();
                 }
             }
-            else if (e.KeyCode == Keys.D1)
+            else if (e.KeyCode == Keys.W)
             {
-                LSystem _lSystem = new LSystem();
-                _lSystem.Init(n: 5, delta: 25.7f);
-                _lSystem.LoadProductions("X,F[+X]F[-X]+X\r\nF,FF");
-                string words = _lSystem.Generate("X");
-                Console.WriteLine(words);
+                
             }
         }
     }

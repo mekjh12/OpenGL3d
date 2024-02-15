@@ -11,7 +11,7 @@ namespace LSystem
         public static string EXECUTE_PATH;
         public static string PROJECT_PATH;
 
-        private FPSCamera _camera;
+        private Camera _camera;
 
         private int _width;
         private int _height;
@@ -19,7 +19,7 @@ namespace LSystem
         private Action<int> _update;
         private Action<int> _render;
 
-        public FPSCamera Camera => _camera;
+        public Camera Camera => _camera;
 
         public int Width => _width;
         
@@ -57,7 +57,7 @@ namespace LSystem
         {
             if (_camera == null)
             {
-                _camera = new FPSCamera("fpsCam", -13, -1.5f, 3, 0, 0);
+                _camera = new OrbitCamera("fpsCam", -13, -1.5f, 3, 10);
                 _camera.Init(_width, _height);
             }
 

@@ -9,13 +9,19 @@ namespace LSystem
         protected Vertex3f _color;
         protected bool _textured = false;
         protected RawModel3d _model;
-        protected OpenGL.Quaternion _quaternion = OpenGL.Quaternion.Identity;
+        protected Pose _pose;
         protected Material _material;
+        protected bool _isAxisVisible = false;
 
-        Vertex3f _position;
         Vertex3f _scale;
 
         public uint OBJECT_GUID => _guid;
+
+        public bool IsAxisVisible
+        {
+            get => _isAxisVisible;
+            set => _isAxisVisible = value;
+        }
 
         public string Name
         {
@@ -34,18 +40,18 @@ namespace LSystem
 
         public Vertex3f Position
         {
-            get => _position;
-            set => _position = value;
+            get => _pose.Postiton;
+            set => _pose.Postiton = value;
         }
 
         public Matrix4x4f ModelMatrix
         {
-            get // 연산순서는 S->R->T순이다.
+            get 
             {
-                Matrix4x4f S = Extension.Scaled(_scale);
-                Matrix4x4f R = ((Matrix4x4f)(_quaternion));
-                Matrix4x4f T = Matrix4x4f.Translated(_position.x, _position.y, _position.z);
-                return S * R * T;
+                Matrix4x4f S = Extension.Scaled(_scale); 
+                Matrix4x4f R = _pose.Matrix4x4f;
+                Matrix4x4f T = Matrix4x4f.Translated(_pose.Postiton.x, _pose.Postiton.y, _pose.Postiton.z);
+                return T * R * S; // [순서 중요] 연산순서는 S->R->T순이다.
             }
         }
 
@@ -63,9 +69,10 @@ namespace LSystem
 
         public Entity(RawModel3d rawModel3D, string name = "")
         {
+            _pose = new Pose(Quaternion.Identity, Vertex3f.Zero);
             _guid = GUID.GenID;
             _scale = Vertex3f.One;
-            _position = Vertex3f.Zero;
+            _pose.Postiton = Vertex3f.Zero;
             _model = rawModel3D;
             _name = (name == "") ? $"Entity" + _guid : name;
             _color = Rand.NextColor3f;
@@ -81,27 +88,28 @@ namespace LSystem
 
         public void IncreasePosition(float dx, float dy, float dz)
         {
-            _position.x += dx;
-            _position.y += dy;
-            _position.z += dz;
+            _pose.Postiton += new Vertex3f(dx, dy, dz);
         }
+
         public virtual void Yaw(float deltaDegree)
         {
-            // q0 * q이므로 q회전 -> q0회전이다.
-            OpenGL.Quaternion q = new OpenGL.Quaternion(Vertex3f.UnitY, deltaDegree);
-            _quaternion = _quaternion.Concatenate(q);
+            Vertex3f up = -_pose.Matrix4x4f.Column1.Vertex3f(); // 오른손 법칙으로
+            OpenGL.Quaternion q = new OpenGL.Quaternion(up, deltaDegree);
+            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
         }
 
         public virtual void Roll(float deltaDegree)
         {
-            OpenGL.Quaternion q = new OpenGL.Quaternion(Vertex3f.UnitX, deltaDegree);
-            _quaternion = _quaternion.Concatenate(q);
+            Vertex3f forward = _pose.Matrix4x4f.Column2.Vertex3f();
+            OpenGL.Quaternion q = new OpenGL.Quaternion(forward, deltaDegree);
+            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
         }
 
         public virtual void Pitch(float deltaDegree)
         {
-            OpenGL.Quaternion q = new OpenGL.Quaternion(Vertex3f.UnitZ, deltaDegree);
-            _quaternion = _quaternion.Concatenate(q);
+            Vertex3f right = _pose.Matrix4x4f.Column0.Vertex3f();
+            OpenGL.Quaternion q = new OpenGL.Quaternion(right, deltaDegree);
+            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
         }
 
     }
