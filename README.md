@@ -2,12 +2,7 @@
 
 ![image](https://github.com/mekjh12/OpenGL3d/assets/122244587/fbb8c295-bd4f-41e0-a698-feb2a0e7c56d)
 
-<figure>
-  <img src="https://github.com/mekjh12/OpenGL3d/assets/122244587/e9546f50-5dbd-4483-9a04-4283f1aa7d0d"/>
-  <figcaption>Alt Text</figcaption>
-</figure>
-
-![caption](/path/to/image.jpg)
+![orbit camera](https://github.com/mekjh12/OpenGL3d/assets/122244587/e9546f50-5dbd-4483-9a04-4283f1aa7d0d)
 
 ## 클래스 설명
 
