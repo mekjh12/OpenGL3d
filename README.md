@@ -4,10 +4,13 @@
 
 
 <figure>
-  <img src="https://github.com/mekjh12/OpenGL3d/assets/122244587/e9546f50-5dbd-4483-9a04-4283f1aa7d0d" alt="">
   <figcaption>literature from 45 BC, making it over 2000 years old.</figcaption>
 </figure>
 
+<figure>
+  <img src="https://github.com/mekjh12/OpenGL3d/assets/122244587/e9546f50-5dbd-4483-9a04-4283f1aa7d0d"/>
+  <figcaption>Alt Text</figcaption>
+</figure>
 
 ## 클래스 설명
 
