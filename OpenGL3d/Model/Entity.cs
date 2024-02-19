@@ -94,22 +94,22 @@ namespace LSystem
         public virtual void Yaw(float deltaDegree)
         {
             Vertex3f up = -_pose.Matrix4x4f.Column1.Vertex3f(); // 오른손 법칙으로
-            OpenGL.Quaternion q = new OpenGL.Quaternion(up, deltaDegree);
-            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
+            Quaternion q = new Quaternion(up, deltaDegree);
+            _pose.Quaternion = q * _pose.Quaternion;
         }
 
         public virtual void Roll(float deltaDegree)
         {
             Vertex3f forward = _pose.Matrix4x4f.Column2.Vertex3f();
-            OpenGL.Quaternion q = new OpenGL.Quaternion(forward, deltaDegree);
-            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
+            Quaternion q = new Quaternion(forward, deltaDegree);
+            _pose.Quaternion = q * _pose.Quaternion;
         }
 
         public virtual void Pitch(float deltaDegree)
         {
             Vertex3f right = _pose.Matrix4x4f.Column0.Vertex3f();
-            OpenGL.Quaternion q = new OpenGL.Quaternion(right, deltaDegree);
-            _pose.Quaternion = q.Concatenate(_pose.Quaternion);
+            Quaternion q = new Quaternion(right, deltaDegree);
+            _pose.Quaternion = q * _pose.Quaternion;
         }
 
     }

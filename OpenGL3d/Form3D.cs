@@ -15,6 +15,13 @@ namespace LSystem
         public Form3D()
         {
             InitializeComponent();
+
+            LSystem.Quaternion q1 = new Quaternion(1, 2, 3, 4);
+            Quaternion q2 = new Quaternion(4, 3, 2, 1);
+            Quaternion q12 = q1 * q2;
+            Quaternion q21 = q2 * q1;
+            Console.WriteLine($"{q12.X} {q12.Y} {q12.Z} {q12.W}");
+            Console.WriteLine($"{q21.X} {q21.Y} {q21.Z} {q21.W}");
         }
 
         private void Form3D_Load(object sender, EventArgs e)
@@ -54,10 +61,10 @@ namespace LSystem
                 Entity entity = entities[0];
                 if (Keyboard.IsKeyDown(Key.D1)) entity.Roll(1);
                 if (Keyboard.IsKeyDown(Key.D2)) entity.Roll(-1);
-                if (Keyboard.IsKeyDown(Key.D3)) entity.Pitch(1);
-                if (Keyboard.IsKeyDown(Key.D4)) entity.Pitch(-1);
-                if (Keyboard.IsKeyDown(Key.D5)) entity.Yaw(1);
-                if (Keyboard.IsKeyDown(Key.D6)) entity.Yaw(-1);
+                if (Keyboard.IsKeyDown(Key.D3)) entity.Yaw(1);
+                if (Keyboard.IsKeyDown(Key.D4)) entity.Yaw(-1);
+                if (Keyboard.IsKeyDown(Key.D5)) entity.Pitch(1);
+                if (Keyboard.IsKeyDown(Key.D6)) entity.Pitch(-1);
 
                 Camera camera = _gameLoop.Camera;
                 this.Text = $"{FramePerSecond.FPS}fps, t={FramePerSecond.GlobalTick} p={camera.Position}";

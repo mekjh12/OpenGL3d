@@ -112,24 +112,5 @@ namespace LSystem
             return m;
         }
 
-        /// <summary>
-        /// 쿼터니온의 곱을 반환한다. 
-        /// OpenGL.Quaternion의 곱의 연산 오류로 인하여 새롭게 구현하였다.
-        /// 순서는 q2.Concatenate(q1)의 의미는 q1을 적용한 후에 q2를 적용한다.
-        /// </summary>
-        /// <param name="quaternion"></param>
-        /// <param name="q"></param>
-        /// <returns></returns>
-        public static OpenGL.Quaternion Concatenate(this OpenGL.Quaternion quaternion, OpenGL.Quaternion q)
-        {
-            //순서는 q2.Concatenate(q1)의 의미는 q1을 적용한 후에 q2를 적용한다.
-            float s1 = quaternion.W;
-            float s2 = q.W;
-            Vertex3f v1 = new Vertex3f(quaternion.X, quaternion.Y, quaternion.Z);
-            Vertex3f v2 = new Vertex3f(q.X, q.Y, q.Z);
-            float s = s1 * s2 - v1.Dot(v2);
-            Vertex3f v = v1 * s2 + v2 * s1 + v1.Cross(v2);
-            return new Quaternion(v.x, v.y, v.z, s);
-        }
     }
 }
