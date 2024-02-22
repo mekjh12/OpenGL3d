@@ -82,10 +82,11 @@
   <ItemGroup>
     <Compile Include="Camera\Camera.cs" />
     <Compile Include="Camera\OrbitCamera.cs" />
+    <Compile Include="Common\IniFile.cs" />
     <Compile Include="EngineLoop.cs" />
     <Compile Include="Input\Mouse.cs" />
     <Compile Include="Model\Entity.cs" />
-    <Compile Include="Extension.cs" />
+    <Compile Include="Common\Extension.cs" />
     <Compile Include="Form3D.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,15 +94,15 @@
       <DependentUpon>Form3D.cs</DependentUpon>
     </Compile>
     <Compile Include="Camera\FpsCamera.cs" />
-    <Compile Include="FramePerSecond.cs" />
-    <Compile Include="GUID.cs" />
+    <Compile Include="Common\FramePerSecond.cs" />
+    <Compile Include="Common\GUID.cs" />
     <Compile Include="Input\KeyBoard.cs" />
     <Compile Include="Model\Material.cs" />
     <Compile Include="Model\Pose.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Quaternion.cs" />
-    <Compile Include="Rand.cs" />
+    <Compile Include="Common\Quaternion.cs" />
+    <Compile Include="Common\Rand.cs" />
     <Compile Include="Model\RawModel3d.cs" />
     <Compile Include="Shader\Renderer.cs" />
     <Compile Include="Shader\ShaderProgram.cs" />
@@ -135,6 +136,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="setup.ini" />
     <None Include="Shader\static.frag" />
     <None Include="Shader\static.vert" />
   </ItemGroup>

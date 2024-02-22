@@ -296,7 +296,7 @@ namespace LSystem
 
         public override string ToString()
         {
-            return $"Axis: {RotationVector} Angle: {RotationAngle} (X{_Vector.x},Y{_Vector.y},Z{_Vector.z},W{_CosAngle})";
+            return $"Axis: {RotationVector} Angle: {RotationAngle} (x,y,z,w)=({_Vector.x},{_Vector.y},{_Vector.z},{_CosAngle})";
         }
     }
 }

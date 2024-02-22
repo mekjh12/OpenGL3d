@@ -19,7 +19,11 @@ namespace LSystem
         private Action<int> _update;
         private Action<int> _render;
 
-        public Camera Camera => _camera;
+        public Camera Camera
+        {
+            get => _camera;
+            set => _camera = value;
+        }
 
         public int Width => _width;
         
